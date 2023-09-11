@@ -1,6 +1,8 @@
 package com.hg.minio.config;
 
 import com.hg.minio.common.MinioProp;
+import com.hg.minio.common.MinioStorageClient;
+import io.minio.MinioAsyncClient;
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,5 +37,21 @@ public class MinioConfig {
                 .credentials(minioProp.getAccessKey(), minioProp.getSecretKey())
                 .endpoint(minioProp.getEndpoint())
                 .build();
+    }
+
+    @Bean
+    public MinioAsyncClient minioAsyncClient() {
+        return MinioAsyncClient.builder()
+                .credentials(minioProp.getAccessKey(), minioProp.getSecretKey())
+                .endpoint(minioProp.getEndpoint())
+                .build();
+    }
+
+    /**
+     * 注入自定义的minio分片上传client
+     */
+    @Bean
+    public MinioStorageClient minioStorageClient() {
+        return new MinioStorageClient(minioAsyncClient());
     }
 }
